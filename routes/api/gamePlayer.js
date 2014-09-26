@@ -261,10 +261,12 @@ function getGames(params) {
 		player2 = params.player2,
 		numberOfGames = params.numberOfGames,
 		sandbox1 = vm.createContext({
-			global: {}
+			global: {console: console},
+			console: console
 		}),
 		sandbox2 = vm.createContext({
-			global: {}
+			global: {console: console},
+			console: console
 		}),
 		results = [], result;
 
