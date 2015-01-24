@@ -89,7 +89,7 @@ mmorales.prototype.setupBoard = function setupBoard(ships) {
 
 mmorales.prototype.fire = function fire(myMoves, theirMoves) {
 	try {
-		//console.log('Playing turn ' + (myMoves.length + 1));
+		console.log('Playing turn ' + (myMoves.length + 1));
 		
 		var myMovesBoard = [
 				[null, null, null, null, null, null, null, null, null, null],
@@ -122,6 +122,15 @@ mmorales.prototype.fire = function fire(myMoves, theirMoves) {
 				[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 				[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 			];
+			
+		// raise scores on zigzag
+		for (var x = 0; x < 10; x++) {
+			for (var y = 0; y < 10; y++) {
+				if ((x % 2 == 0 && y % 2 == 1)
+					|| (x % 2 == 1 && y % 2 == 0))
+					board[x][y] += 0.5;
+			}
+		}
 		
 		for (var myMoveIdx = 0; myMoveIdx < myMoves.length; myMoveIdx++) {
 			var myMove = myMoves[myMoveIdx];
@@ -176,9 +185,9 @@ mmorales.prototype.fire = function fire(myMoves, theirMoves) {
 				}
 			}
 		}
-		//console.log(highest.coordinates.length + ' moves with highest score ' + highest.score);
+		console.log(highest.coordinates.length + ' moves with highest score ' + highest.score);
 		var highestPoint = highest.coordinates[Math.floor((Math.random() * 100) % highest.coordinates.length)];
-		//console.log('Playing (' + highestPoint.x + ',' + highestPoint.y + ')');
+		console.log('Playing (' + highestPoint.x + ',' + highestPoint.y + ')');
 		return new Battleship.Point(highestPoint.x, highestPoint.y);
 	} catch (e) {
 		console.log('Error!!');
