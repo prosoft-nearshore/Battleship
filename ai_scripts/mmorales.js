@@ -91,6 +91,7 @@ mmorales.prototype.fire = function fire(myMoves, theirMoves) {
 	try {
 		console.log('Playing turn ' + (myMoves.length + 1));
 		
+        // coordinate board of my previous moves for quick reference
 		var myMovesBoard = [
 				[null, null, null, null, null, null, null, null, null, null],
 				[null, null, null, null, null, null, null, null, null, null],
@@ -103,13 +104,16 @@ mmorales.prototype.fire = function fire(myMoves, theirMoves) {
 				[null, null, null, null, null, null, null, null, null, null],
 				[null, null, null, null, null, null, null, null, null, null]
 			];
+        // helper function to determine if a coordinate is (confirmed) Water or a Hit that sank a boat
 		var isWaterOrSunkHit = function (x, y) {
 			return myMovesBoard[x][y] != null && (!myMovesBoard[x][y].isHit || myMovesBoard[x][y].isSunk);
 		};
+        // helper function to determine if a coordinate is a hit that didn't yet sink a boat
 		var isUnsunkHit = function (x, y) {
 			return myMovesBoard[x][y] != null && myMovesBoard[x][y].isHit && !myMovesBoard[x][y].isSunk;
 		};
 
+        // weight scores board
 		var board = [
 				[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 				[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -123,7 +127,7 @@ mmorales.prototype.fire = function fire(myMoves, theirMoves) {
 				[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 			];
 			
-		// raise scores on zigzag
+		// raise scores on zigzag (intermitent coords)
 		for (var x = 0; x < 10; x++) {
 			for (var y = 0; y < 10; y++) {
 				if ((x % 2 == 0 && y % 2 == 1)
@@ -132,9 +136,11 @@ mmorales.prototype.fire = function fire(myMoves, theirMoves) {
 			}
 		}
 		
+        // loop and analyze my previous moves
 		for (var myMoveIdx = 0; myMoveIdx < myMoves.length; myMoveIdx++) {
 			var myMove = myMoves[myMoveIdx];
 			myMovesBoard[myMove.x][myMove.y] = myMove;
+
 			// cancel all spots that i've already played (hit or water)
 			board[myMove.x][myMove.y] = -1000000;
 			
@@ -147,9 +153,10 @@ mmorales.prototype.fire = function fire(myMoves, theirMoves) {
 			}
 		}
 		
+        // loop thru my previous moves to apply further rules
 		for (var x = 0; x < 10; x++) {
 			for (var y = 0; y < 10; y++) {
-				// rule out spots of length 1
+				// rule out spots of size 1
 				if ((x == 0 || isWaterOrSunkHit(x-1,y))
 					&& (x == 9 || isWaterOrSunkHit(x+1,y))
 					&& (y == 0 || isWaterOrSunkHit(x,y-1))
@@ -186,6 +193,7 @@ mmorales.prototype.fire = function fire(myMoves, theirMoves) {
 			}
 		}
 		console.log(highest.coordinates.length + ' moves with highest score ' + highest.score);
+        // pick random point from set of highest scores
 		var highestPoint = highest.coordinates[Math.floor((Math.random() * 100) % highest.coordinates.length)];
 		console.log('Playing (' + highestPoint.x + ',' + highestPoint.y + ')');
 		return new Battleship.Point(highestPoint.x, highestPoint.y);
